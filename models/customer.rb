@@ -23,7 +23,7 @@ class Customer
   def self.delete_all()
     db = PG.connect({dbname: 'pizza_shop', host: 'localhost'})
     sql = "DELETE FROM customers"
-    dB.prepare("delete_all", sql)
+    db.prepare("delete_all", sql)
     result = db.exec_prepared("delete_all")
     db.close
   end

@@ -2,33 +2,29 @@
 
 class PizzaOrder
 
-  attr_accessor :first_name, :last_name, :topping, :quantity
+  attr_accessor :topping, :quantity, :customer_id
   attr_reader :id
 
   def initialize(options)
-    @first_name = options['first_name']
-    @last_name = options['last_name']
+    @id = options['id'].to_i if options['id']
     @topping = options['topping']
     @quantity = options['quantity'].to_i
-    @id = options['id'].to_i if options['id']
+    @customer_id = options['customer_id'].to_i
   end
 
   def save()
     db = PG.connect({ dbname: 'pizza_shop', host: 'localhost' })
     sql = "INSERT INTO pizza_orders
     (
-      first_name,
-      last_name,
+      customer_id,
       topping,
       quantity
     ) VALUES
-    (
-      $1, $2, $3, $4
-    )
+    ($1, $2, $3)
     RETURNING id"
-    values = [@first_name, @last_name, @topping, @quantity]
+    values = [@topping, @quantity, @customer_id]
     db.prepare("save", sql)
-    @id = db.exec_prepared("save", values)[0]["id"].to_i
+    result = db.exec_prepared("save", values)
     db.close()
   end
 
@@ -36,16 +32,15 @@ class PizzaOrder
     db = PG.connect({ dbname: 'pizza_shop', host: 'localhost' })
     sql = "
     UPDATE pizza_orders SET (
-      first_name,
-      last_name,
+      customer_id,
       topping,
-      quantity
+      quantity,
     ) =
     (
-      $1,$2, $3, $4
+      $1,$2, $3,
     )
-    WHERE id = $5"
-    values = [@first_name, @last_name, @topping, @quantity, @id]
+    WHERE id = $4"
+    values = [@customer_id, @topping, @quantity, @id]
     db.prepare("update", sql)
     db.exec_prepared("update", values)
     db.close()
