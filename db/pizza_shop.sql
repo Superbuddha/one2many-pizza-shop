@@ -1,5 +1,5 @@
 DROP TABLE IF EXISTS pizza_orders;
-DROP TABLE customers;
+DROP TABLE IF EXISTS customers;
 
 CREATE TABLE customers (
   id SERIAL4 PRIMARY KEY,
@@ -7,11 +7,8 @@ CREATE TABLE customers (
 );
 
 CREATE TABLE pizza_orders (
-  id SERIAL4 PRIMARY KEY,
-  customer_id INT4 REFERENCES customers(id),
-  -- first_name VARCHAR(255),
-  -- last_name VARCHAR(255),
+  id serial4 PRIMARY KEY,
   topping VARCHAR(255),
   quantity INT2,
-  -- customer_id INT4 REFERENCES customers(id)
+  customer_id INT4 REFERENCES customers(id) ON DELETE CASCADE
 );
